@@ -17,7 +17,7 @@ class Program
 	readonly static Queue<Vec> snake = [];
 	static Vec head = null!;
 	static Vec direction = RIGHT;
-	static readonly LinkedList<Vec> foods = [];
+	static readonly HashSet<Vec> foods = [];
 	// #endregion Game Variable
 
 	static void Main()
@@ -80,10 +80,8 @@ class Program
 
 		snake.Enqueue(head);
 
-		var f = foods.Find(head);
-		if (f != null)
+		if (foods.Remove(head))
 		{
-			foods.Remove(f);
 			score++;
 			GenerateFood();
 		}
@@ -100,7 +98,7 @@ class Program
 		{
 			food = new Vec(rand.Next(0, WIDTH), rand.Next(0, HEIGHT));
 		} while (snake.Contains(food) || foods.Contains(food));
-		foods.AddLast(food);
+		foods.Add(food);
 	}
 
 	static void DrawWalls()
