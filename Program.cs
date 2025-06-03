@@ -17,7 +17,7 @@ class Program
 	readonly static Queue<Vec> snake = [];
 	static Vec head = null!;
 	static Vec direction = RIGHT;
-	static Vec food = null!;
+	static readonly LinkedList<Vec> foods = [];
 	// #endregion Game Variable
 
 	static void Main()
@@ -49,6 +49,7 @@ class Program
 		head = new(WIDTH / 2, HEIGHT / 2);
 		snake.Enqueue(head);
 		GenerateFood();
+		GenerateFood();
 	}
 
 	static void ChangeDirection(ConsoleKey key)
@@ -79,8 +80,10 @@ class Program
 
 		snake.Enqueue(head);
 
-		if (head == food)
+		var f = foods.Find(head);
+		if (f != null)
 		{
+			foods.Remove(f);
 			score++;
 			GenerateFood();
 		}
@@ -92,10 +95,12 @@ class Program
 
 	static void GenerateFood()
 	{
+		Vec food;
 		do
 		{
-			food = new(rand.Next(0, WIDTH), rand.Next(0, HEIGHT));
-		} while (snake.Contains(food));
+			food = new Vec(rand.Next(0, WIDTH), rand.Next(0, HEIGHT));
+		} while (snake.Contains(food) || foods.Contains(food));
+		foods.AddLast(food);
 	}
 
 	static void DrawWalls()
@@ -134,8 +139,11 @@ class Program
 
 		// Draw food
 		Console.ForegroundColor = ConsoleColor.Red;
-		Console.SetCursorPosition(food.X + 1, food.Y + 1);
-		Console.Write('O');
+		foreach (var food in foods)
+		{
+			Console.SetCursorPosition(food.X + 1, food.Y + 1);
+			Console.Write('O');
+		}
 
 		// Draw snake
 		Console.ForegroundColor = ConsoleColor.Green;
